@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Una Sorpresa Para Ti</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Estilos generales y reseteo */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Evita barras de scroll innecesarias */
+        }
+
+        /* Contenedor del video de fondo */
+        #video-fondo {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            background-size: cover;
+            filter: brightness(0.6); /* Oscurece un poco el video para que el texto resalte */
+        }
+
+        /* Capa de contenido encima del video */
+        .contenido-principal {
+            position: relative;
+            z-index: 10;
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Distribuye el espacio verticalmente */
+            align-items: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        /* La carta que se puede presionar */
+        .carta {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .carta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        .carta h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* El texto que aparecerá al hacer clic, inicialmente oculto */
+        #texto-secreto {
+            display: none;
+            margin-top: 20px;
+            font-size: 1.1em;
+            line-height: 1.6;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+        }
+
+        /* Reproductor de música estilo Spotify */
+        .reproductor-spotify {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reproductor-spotify .info-cancion {
+            margin-left: 15px;
+            text-align: left;
+        }
+
+        .reproductor-spotify .info-cancion h4 {
+            margin: 0;
+            font-size: 1em;
+        }
+
+        #boton-play-pausa {
+            background-color: #1DB954; /* Verde Spotify */
+            border: none;
+            border-radius: 50%;
+            color: white;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+        
+        #boton-play-pausa:hover {
+            transform: scale(1.1);
+        }
+
+        /* Botón inferior */
+        .boton-amor {
+            background-color: #E91E63; /* Un color rosa/rojo vibrante */
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .boton-amor:hover {
+            background-color: #AD1457;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+        }
+
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop id="video-fondo">
+        <source src="200533-913022333_medium.mp4" type="video/mp4">
+        Tu navegador no soporta videos HTML5.
+    </video>
+
+    <audio id="musica-fondo" src="Química Mayor.mp3"></audio>
+
+    <div class="contenido-principal">
+        
+        <div class="reproductor-spotify">
+            <button id="boton-play-pausa"><i class="fas fa-play"></i></button>
+            <div class="info-cancion">
+                <h4>Química Mayor</h4>
+            </div>
+        </div>
+
+        <div class="carta" id="mi-carta">
+            <h2>💌 Una carta para ti 💌</h2>
+            <p>(Haz clic aquí para leer)</p>
+            <div id="texto-secreto">
+                <p>
+                    Este es el lugar donde escribirás todo el mensaje especial
+                    que aparecerá cuando ella presione la carta. 
+                    Puedes escribir párrafos largos, cortos, lo que tú quieras.
+                    ¡Hazlo especial!
+                </p>
+            </div>
+        </div>
+
+        <a href="https://joshxmaykol.github.io/PARA_MARIBEL/" class="boton-amor">
+            ¿Quieres saber cuánto te amo?
+        </a>
+
+    </div>
+
+    <script>
+        // Lógica para la carta
+        const carta = document.getElementById('mi-carta');
+        const textoSecreto = document.getElementById('texto-secreto');
+
+        carta.addEventListener('click', () => {
+            // Si el texto está oculto, lo muestra. Si está visible, lo oculta.
+            if (textoSecreto.style.display === 'none' || textoSecreto.style.display === '') {
+                textoSecreto.style.display = 'block';
+            } else {
+                textoSecreto.style.display = 'none';
+            }
+        });
+
+        // Lógica para el reproductor de música
+        const botonPlayPausa = document.getElementById('boton-play-pausa');
+        const musica = document.getElementById('musica-fondo');
+        const icono = botonPlayPausa.querySelector('i');
+
+        botonPlayPausa.addEventListener('click', () => {
+            if (musica.paused) {
+                musica.play();
+                icono.classList.remove('fa-play');
+                icono.classList.add('fa-pause');
+            } else {
+                musica.pause();
+                icono.classList.remove('fa-pause');
+                icono.classList.add('fa-play');
+            }
+        });
+        
+        // Opcional: Cuando la canción termina, el icono vuelve a ser "play"
+        musica.addEventListener('ended', () => {
+             icono.classList.remove('fa-pause');
+             icono.classList.add('fa-play');
+        });
+
+    </script>
+
+</body>
+</html>
