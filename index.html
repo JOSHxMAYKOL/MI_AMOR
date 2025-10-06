@@ -19,21 +19,96 @@
             overflow: hidden; /* Evita barras de scroll innecesarias */
         }
 
-        /* Contenedor del video de fondo */
+        /* ----- Pantalla de Carga (Preloader) ----- */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white; /* Fondo blanco */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* Asegura que esté por encima de todo */
+            transition: opacity 1s ease-out, visibility 1s; /* Suaviza la desaparición */
+            visibility: visible;
+        }
+
+        #preloader.hidden {
+            opacity: 0;
+            visibility: hidden; /* Oculta completamente el elemento */
+            pointer-events: none; /* Permite interactuar con lo de abajo una vez oculto */
+        }
+
+        #preloader img {
+            width: 150px; /* Tamaño de tu logo */
+            height: auto;
+            margin-bottom: 30px;
+            animation: bounce 2s infinite ease-in-out; /* Animación para el logo */
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .loading-bar-container {
+            width: 80%;
+            max-width: 400px;
+            height: 20px;
+            background-color: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        #loading-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #ff69b4; /* Color rosa para la barra de carga */
+            border-radius: 10px;
+            transition: width 0.3s ease-out; /* Suaviza el llenado */
+        }
+
+        .heart-emoji {
+            position: absolute;
+            font-size: 1.5em;
+            opacity: 0;
+            animation: floatHeart 1s forwards ease-out;
+            pointer-events: none; /* Evita que el emoji interfiera con clics */
+            text-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        @keyframes floatHeart {
+            0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(1.2); opacity: 0; }
+        }
+
+        /* ----- Contenido principal (detrás del preloader) ----- */
+        #main-content {
+            opacity: 0; /* Inicialmente oculto */
+            transition: opacity 1s ease-in;
+            pointer-events: none; /* No permite interacciones hasta que el preloader se oculte */
+        }
+
+        #main-content.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
         #video-fondo {
             position: fixed;
             right: 0;
             bottom: 0;
             min-width: 100%;
             min-height: 100%;
-            width: auto;
-            height: auto;
             z-index: -100;
-            background-size: cover;
-            filter: brightness(0.6); /* Oscurece un poco el video para que el texto resalte */
+            filter: brightness(0.6);
         }
 
-        /* Capa de contenido encima del video */
         .contenido-principal {
             position: relative;
             z-index: 10;
@@ -41,47 +116,39 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Distribuye el espacio verticalmente */
+            justify-content: space-between;
             align-items: center;
-            padding: 40px 20px;
+            padding: 40px 20px 100px 20px; /* Padding inferior aumentado */
             text-align: center;
         }
 
-        /* La carta que se puede presionar */
-        .carta {
+        /* Contenedor de la imagen de la carta */
+        .carta-imagen-container {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 30px;
+            padding: 20px; /* Menos padding si la imagen ya es grande */
             border-radius: 20px;
-            max-width: 500px;
+            max-width: 300px; /* Ajusta el tamaño máximo del contenedor de la imagen */
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            display: flex; /* Para centrar la imagen dentro */
+            justify-content: center;
+            align-items: center;
         }
 
-        .carta:hover {
+        .carta-imagen-container:hover {
             transform: scale(1.05);
             box-shadow: 0 8px 40px 0 rgba(0, 0, 0, 0.5);
         }
 
-        .carta h2 {
-            font-size: 2em;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        .carta-imagen-container img {
+            max-width: 100%;
+            height: auto;
+            display: block; /* Elimina espacio extra debajo de la imagen */
         }
 
-        /* El texto que aparecerá al hacer clic, inicialmente oculto */
-        #texto-secreto {
-            display: none;
-            margin-top: 20px;
-            font-size: 1.1em;
-            line-height: 1.6;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-        }
-
-        /* Reproductor de música estilo Spotify */
         .reproductor-spotify {
             display: flex;
             align-items: center;
@@ -89,13 +156,11 @@
             padding: 10px 20px;
             border-radius: 50px;
             backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .reproductor-spotify .info-cancion {
             margin-left: 15px;
-            text-align: left;
         }
 
         .reproductor-spotify .info-cancion h4 {
@@ -104,7 +169,7 @@
         }
 
         #boton-play-pausa {
-            background-color: #1DB954; /* Verde Spotify */
+            background-color: #D92525; /* Rojo */
             border: none;
             border-radius: 50%;
             color: white;
@@ -122,9 +187,8 @@
             transform: scale(1.1);
         }
 
-        /* Botón inferior */
         .boton-amor {
-            background-color: #E91E63; /* Un color rosa/rojo vibrante */
+            background-color: #E91E63;
             color: white;
             padding: 15px 30px;
             text-decoration: none;
@@ -138,85 +202,108 @@
         .boton-amor:hover {
             background-color: #AD1457;
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
         }
 
     </style>
 </head>
 <body>
 
-    <video autoplay muted loop id="video-fondo">
-        <source src="200533-913022333_medium.mp4" type="video/mp4">
-        Tu navegador no soporta videos HTML5.
-    </video>
-
-    <audio id="musica-fondo" src="Química Mayor.mp3"></audio>
-
-    <div class="contenido-principal">
-        
-        <div class="reproductor-spotify">
-            <button id="boton-play-pausa"><i class="fas fa-play"></i></button>
-            <div class="info-cancion">
-                <h4>Química Mayor</h4>
-            </div>
+    <div id="preloader">
+        <img src="d.svg" alt="Logo">
+        <div class="loading-bar-container">
+            <div id="loading-bar"></div>
         </div>
+        <p style="color: gray; margin-top: 15px;">Toca para cargar tu amor...</p>
+    </div>
 
-        <div class="carta" id="mi-carta">
-            <h2>💌 Una carta para ti 💌</h2>
-            <p>(Haz clic aquí para leer)</p>
-            <div id="texto-secreto">
-                <p>
-                    Este es el lugar donde escribirás todo el mensaje especial
-                    que aparecerá cuando ella presione la carta. 
-                    Puedes escribir párrafos largos, cortos, lo que tú quieras.
-                    ¡Hazlo especial!
-                </p>
+    <div id="main-content">
+        <video autoplay muted loop id="video-fondo">
+            <source src="200533-913022333_medium.mp4" type="video/mp4">
+            Tu navegador no soporta videos HTML5.
+        </video>
+
+        <audio id="musica-fondo" src="Química Mayor.mp3"></audio>
+
+        <div class="contenido-principal">
+            
+            <div class="reproductor-spotify">
+                <button id="boton-play-pausa"><i class="fas fa-play"></i></button>
+                <div class="info-cancion">
+                    <h4>Química Mayor</h4>
+                </div>
             </div>
+
+            <a href="carta_secreta.html" target="_blank" rel="noopener noreferrer" class="carta-imagen-container">
+                <img src="d1.svg" alt="Abrir Carta">
+            </a>
+
+            <a href="https://joshxmaykol.github.io/PARA_MARIBEL/" class="boton-amor" target="_blank" rel="noopener noreferrer">
+                ¿Quieres saber cuánto te amo?
+            </a>
         </div>
-
-        <a href="https://joshxmaykol.github.io/PARA_MARIBEL/" class="boton-amor">
-            ¿Quieres saber cuánto te amo?
-        </a>
-
     </div>
 
     <script>
-        // Lógica para la carta
-        const carta = document.getElementById('mi-carta');
-        const textoSecreto = document.getElementById('texto-secreto');
+        const preloader = document.getElementById('preloader');
+        const loadingBar = document.getElementById('loading-bar');
+        const mainContent = document.getElementById('main-content');
+        const totalClicksToLoad = 10;
+        let currentClicks = 0;
 
-        carta.addEventListener('click', () => {
-            // Si el texto está oculto, lo muestra. Si está visible, lo oculta.
-            if (textoSecreto.style.display === 'none' || textoSecreto.style.display === '') {
-                textoSecreto.style.display = 'block';
-            } else {
-                textoSecreto.style.display = 'none';
+        function hidePreloader() {
+            preloader.classList.add('hidden');
+            mainContent.classList.add('visible');
+        }
+
+        preloader.addEventListener('click', (event) => {
+            if (currentClicks < totalClicksToLoad) {
+                currentClicks++;
+                const percentage = (currentClicks / totalClicksToLoad) * 100;
+                loadingBar.style.width = `${percentage}%`;
+
+                const heart = document.createElement('span');
+                heart.classList.add('heart-emoji');
+                heart.textContent = '❤️';
+                
+                const rect = preloader.getBoundingClientRect();
+                const xClick = event.clientX - rect.left;
+                const yClick = event.clientY - rect.top;
+
+                heart.style.left = `${xClick}px`;
+                heart.style.top = `${yClick}px`;
+                
+                const randomX = Math.random() * 100 - 50;
+                const randomY = Math.random() * 100 - 150;
+                heart.style.setProperty('--x', `${randomX}px`);
+                heart.style.setProperty('--y', `${randomY}px`);
+
+                preloader.appendChild(heart);
+
+                heart.addEventListener('animationend', () => heart.remove());
+
+                if (currentClicks >= totalClicksToLoad) {
+                    setTimeout(hidePreloader, 500);
+                }
             }
         });
 
-        // Lógica para el reproductor de música
+        // Lógica para el reproductor de música (sin cambios)
         const botonPlayPausa = document.getElementById('boton-play-pausa');
         const musica = document.getElementById('musica-fondo');
         const icono = botonPlayPausa.querySelector('i');
-
         botonPlayPausa.addEventListener('click', () => {
             if (musica.paused) {
                 musica.play();
-                icono.classList.remove('fa-play');
-                icono.classList.add('fa-pause');
+                icono.classList.replace('fa-play', 'fa-pause');
             } else {
                 musica.pause();
-                icono.classList.remove('fa-pause');
-                icono.classList.add('fa-play');
+                icono.classList.replace('fa-pause', 'fa-play');
             }
         });
         
-        // Opcional: Cuando la canción termina, el icono vuelve a ser "play"
         musica.addEventListener('ended', () => {
-             icono.classList.remove('fa-pause');
-             icono.classList.add('fa-play');
+             icono.classList.replace('fa-pause', 'fa-play');
         });
-
     </script>
 
 </body>
